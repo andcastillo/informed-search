@@ -24,7 +24,7 @@ const costs = [1, 1, 1, 1];
 
 
 function isSolution(nodo, constantes) {
-    solution = constantes.solution;
+    let solution = constantes.solution;
     if (nodo.value.x == solution.x &&
         nodo.value.y == solution.y)
         return true;
@@ -35,39 +35,48 @@ function getChildren(nodo, constantes) {
     let map = constantes.map;
     let children = []
     // Left
-    if (nodo.value.x >= 1 && map[nodo.value.x - 1][nodo.value.y] == 0) {
+    if (nodo.value.x >= 1 && map[nodo.value.y][nodo.value.x - 1] == 0) {
         children.push({value: {x: nodo.value.x - 1,
                                y: nodo.value.y},
                         actions: nodo.actions + 'L',
-                        level: nodo.level.level + 1
+                        level: nodo.level + 1
         });
     }
     // Up
-    if (nodo.value.y >= 1 && map[nodo.value.x][nodo.value.y - 1] == 0) {
+    if (nodo.value.y >= 1 && map[nodo.value.y - 1][nodo.value.x] == 0) {
         children.push({value: {x: nodo.value.x,
                                y: nodo.value.y - 1},
                         actions: nodo.actions + 'U',
-                        level: nodo.level.level + 1
+                        level: nodo.level + 1
         });
     }
     // Right
-    if (nodo.value.x < map[0].length - 1 && map[nodo.value.x + 1 ][nodo.value.y] == 0) {
+    if (nodo.value.x < map[0].length - 1 && map[nodo.value.y ][nodo.value.x + 1] == 0) {
         children.push({value: {x: nodo.value.x + 1,
                                y: nodo.value.y},
                         actions: nodo.actions + 'R',
-                        level: nodo.level.level + 1
+                        level: nodo.level + 1
         });
     }
     // Down
-    if (nodo.value.y < map.length - 1 && map[nodo.value.x][nodo.value.y + 1] == 0) {
+    if (nodo.value.y < map.length - 1 && map[nodo.value.y + 1][nodo.value.x] == 0) {
         children.push({value: {x: nodo.value.x,
                                y: nodo.value.y + 1},
                         actions: nodo.actions + 'D',
-                        level: nodo.level.level + 1
+                        level: nodo.level + 1
         });
     }
 
     return children;
+}
+
+function addToQueue(queue, nodes) {
+    queue.push(...nodes);
+    return queue;
+}
+
+function removeFromQueue(queue) {
+    return queue.shift()
 }
 
 let constantes = {map, solution, start, actions, costs}
@@ -86,5 +95,7 @@ console.log(children[1].actions == 'D');
 console.log(children[1].value.x == root.value.x);
 console.log(children[1].value.y == root.value.y + 1);
 console.log(children[1].level == 1);
+
+console.log(isSolution(children[1], constantes) == false);
 
 
