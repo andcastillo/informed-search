@@ -1,5 +1,7 @@
+const bfs = require("./bfs");
+
 // Constantes del problema
-const map = [[1, 1, 1, 1, 1, 1, 1, 1],
+/*const map = [[1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 0, 0, 0, 0, 0, 1],
             [1, 1, 0, 1, 0, 1, 1, 1],
             [1, 0, 0, 0, 0, 1, 0, 1],
@@ -10,18 +12,18 @@ const map = [[1, 1, 1, 1, 1, 1, 1, 1],
             [1, 0, 1, 1, 0, 1, 0, 1],
             [1, 0, 0, 0, 0, 1, 0, 1],
             [1, 0, 1, 0, 0, 1, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1]];
+            [1, 1, 1, 1, 1, 1, 1, 1]];*/
+const map = [[0, 0, 0, 0],
+            [0, 1, 1, 0],
+            [0, 1, 0, 0],
+            [0, 0, 0, 1]]
 
-const start = { x: 1, y: 7 };
-const solution = { x: 6, y: 6 };
+const start = { x: 0, y: 2 };
+const solution = { x: 3, y: 1 };
 const actions = ['L', 'U', 'R', 'D'];
 const costs = [1, 1, 1, 1];
 
-// Búsqueda por amplitud
-// Ejemplo de nodo
 //let nodo = {value: {x: 2, y: 6}, actions: 'RU', level: 2};
-
-
 
 function isSolution(nodo, constantes) {
     let solution = constantes.solution;
@@ -70,14 +72,7 @@ function getChildren(nodo, constantes) {
     return children;
 }
 
-function addToQueue(queue, nodes) {
-    queue.push(...nodes);
-    return queue;
-}
 
-function removeFromQueue(queue) {
-    return queue.shift()
-}
 
 let constantes = {map, solution, start, actions, costs}
 let root = {value: constantes.start, actions: '', level: 0};
@@ -97,5 +92,11 @@ console.log(children[1].value.y == root.value.y + 1);
 console.log(children[1].level == 1);
 
 console.log(isSolution(children[1], constantes) == false);
+
+let problem = {constantes, isSolution, getChildren}
+
+let solution = bfs(problem);
+
+console.log(solution); // "RUUUUU"
 
 
