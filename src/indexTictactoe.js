@@ -1,43 +1,47 @@
-const bfs = require("./bfs");
-const dfs = require("./dfs");
+const minMax = require("./minMax");
 
 // Constantes del problema
-const map = [[1, 1, 1, 1, 1, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 0, 1],
-            [1, 1, 0, 1, 0, 1, 1, 1],
-            [1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 0, 1, 1, 0, 1, 0, 1],
-            [1, 0, 0, 1, 0, 1, 0, 1],
-            [1, 1, 0, 1, 0, 1, 0, 1],
-            [1, 0, 0, 1, 0, 0, 0, 1],
-            [1, 0, 1, 1, 0, 1, 0, 1],
-            [1, 0, 0, 0, 0, 1, 0, 1],
-            [1, 0, 1, 0, 0, 1, 0, 1],
-            [1, 1, 1, 1, 1, 1, 1, 1]];
-
-const start = { x: 1, y: 7 };
-const solution = { x: 6, y: 6 };
-/*
-const map = [[0, 0, 0, 0],
-            [0, 1, 1, 0],
-            [0, 1, 0, 0],
-            [0, 0, 0, 1]]
-
-const start = { x: 0, y: 2 };
-const solution = { x: 3, y: 1 };*/
-
-
-const actions = ['L', 'U', 'R', 'D'];
-const costs = [1, 1, 1, 1];
-
-//let nodo = {value: {x: 2, y: 6}, actions: 'RU', level: 2};
+const map = [[0, 1, 0], [2, 2, 0], [0, 1, 0]];
+//Los 1 son las jugadas del jugador 1
+//Los 2 son las jugadas del jugador 2
 
 function isSolution(nodo, constantes) {
     let solution = constantes.solution;
-    if (nodo.value.x == solution.x &&
-        nodo.value.y == solution.y)
-        return true;
-    return false;
+    let full = true;
+    for (let row in solution) {
+        for (let cell in row) {
+            if (cell == 0)
+                full = false;
+                break;
+        }
+        if(!full)
+            break;  
+    }
+
+    let isSolution = false;
+
+    if (solution[0][0] == solution[1][1] && solution[1][1] == solution[2][2] && solution[0][0] !=0) {
+        isSolution = true;
+        break;
+    } 
+    if (solution[0][2] == solution[1][1] && solution[0][2] == solution[2][0]  && solution[0][2] !=0) {
+        isSolution = true;
+        break;
+    }
+    if (!isSolution) {
+        for (let i = 0; i < 3; i++) {
+            if (solution[i][0] == solution[i][1] && solution[i][0] == solution[i][2] && solution[i][0] !=0) {
+                isSolution = true;
+                break;
+            }
+            if (solution[0][i] == solution[1][i] && solution[0][i] == solution[2][i] && solution[0][i] !=0) {
+                isSolution = true;
+                break;
+            }
+        }
+    }
+    
+    return isSolution || full;
 }
 
 function getChildren(nodo, constantes) {
