@@ -1,7 +1,7 @@
 const minMax = require("./minMax");
 
 // Constantes del problema
-const map = [[0, 1, 0], [2, 2, 0], [0, 1, 0]];
+const map = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];//[[0, 1, 0], [2, 1, 0], [2, 0, 0]];
 //Los 1 son las jugadas del jugador 1
 //Los 2 son las jugadas del jugador 2
 /**
@@ -9,14 +9,14 @@ const map = [[0, 1, 0], [2, 2, 0], [0, 1, 0]];
  */
 
 /**
- * 
+ * Comprueba si un estado es una solición del triqui
  * @param {*} nodo 
  * @param {*} constantes 
- * @returns 
+ * @returns {boolean}
  */
 
 function isSolution(nodo, constantes) {
-    let solution = constantes.map;
+    let solution = nodo.state;
     let full = true;
     for (let row in solution) {
         for (let cell in row) {
@@ -27,16 +27,13 @@ function isSolution(nodo, constantes) {
         if(!full)
             break;  
     }
-
     let isSolution = false;
 
     if (solution[0][0] == solution[1][1] && solution[1][1] == solution[2][2] && solution[0][0] !=0) {
         isSolution = true;
-        break;
     } 
     if (solution[0][2] == solution[1][1] && solution[0][2] == solution[2][0]  && solution[0][2] !=0) {
         isSolution = true;
-        break;
     }
     if (!isSolution) {
         for (let i = 0; i < 3; i++) {
@@ -62,14 +59,15 @@ function isSolution(nodo, constantes) {
  * @returns 
  */
 function getChildren(nodo, constantes) {
-    let map = node.state;
+    let map = nodo.state;
     let children = []
-    for (let row = 0; i <  3; row++) {
+    for (let row = 0; row <  3; row++) {
         for (let col = 0; col < 3;  col++) {
             if (map[row][col] == 0) {
                 let nextState = JSON.parse(JSON.stringify(map));
                 nextState[row][col] = nodo.turn;
                 children.push({state: nextState, 
+                    move: [row, col],
                     turn: nodo.turn == 1 ? 2 : 1, 
                     level: nodo.level + 1,
                     score: nodo.turn == 1 ? Number.MAX_SAFE_INTEGER: Number.MIN_SAFE_INTEGER
@@ -80,14 +78,43 @@ function getChildren(nodo, constantes) {
     return children;
 }
 
+function utilidad(node, constantes) {
+    let solution = node.state;
+    let winer = 0;
+
+    if (solution[0][0] == solution[1][1] && solution[1][1] == solution[2][2] && solution[0][0] !=0) {
+        winer = solution[1][1];
+    } 
+    if (solution[0][2] == solution[1][1] && solution[0][2] == solution[2][0]  && solution[0][2] !=0) {
+        winer = solution[1][1];
+    }
+    if (winer==0) {
+        for (let i = 0; i < 3; i++) {
+            if (solution[i][0] == solution[i][1] && solution[i][0] == solution[i][2] && solution[i][0] !=0) {
+                winer = solution[i][0]
+                break;
+            }
+            if (solution[0][i] == solution[1][i] && solution[0][i] == solution[2][i] && solution[0][i] !=0) {
+                winer = solution[0][i]
+                break;
+            }
+        }
+    }
+    if (winer == 0)
+        return 0;
+    else {
+        return winer == 1? 1: -1;
+    }
+}
+
 function hashFunction(node) {
     return node.value.x + '-' + node.value.y;
 }
 
 let constantes = {map}
-let problem = {constantes, isSolution, getChildren, hashFunction}
+let problem = {constantes, isSolution, getChildren, utilidad, hashFunction}
 
-print(minMax(problem)); // Debe retornar la siguiente jugada con su máximo score pos: [1, 1], score: 0
+console.log(minMax(problem)); // Debe retornar la siguiente jugada con su máximo score pos: [1, 1], score: 0
 
 /** 
 let root = {value: constantes.start, actions: '', level: 0};

@@ -9,33 +9,40 @@ function removeFromQueue(queue) {
 
 //let problem = {constantes, isSolution, getChildren}
 function minMax(problem) {
-    let root = {value: problem.constantes.start, actions: '', level: 0};
-    let hashTable = {}; 
-    let cola = addToQueue([], [root]);
-    while (true) {
-        if (cola.length == 0) {
-            return false;
-        }
-        else {
-            let nodo = removeFromQueue(cola);
-            //Expandir
-            if (problem.isSolution(nodo, problem.constantes)) {
-                return nodo.actions;
-            } else {
-                let children = problem.getChildren(nodo, problem.constantes);
-                children = children.filter(node => {
-                    let key = problem.hashFunction(node);
-                    if (!hashTable[key]) {
-                        hashTable[key] = 1
-                        return true;
-                    } else {
-                        return false;
-                    }
-                });
-                addToQueue(cola, children);
+    let nodo = {state: problem.constantes.map, turn: 1, level: 0, score: Number.MIN_SAFE_INTEGER};
+    let solution = _minimax(nodo, problem);
+    console.log(nodo);
+    return solution;
+}
+
+function _minimax(nodo, problem) {
+    let isMax = nodo.turn == 1;
+
+    if (problem.isSolution(nodo, problem.constantes)) {
+        nodo.score = problem.utilidad(nodo, problem.constantes);
+        return nodo;
+    }
+
+    let children = problem.getChildren(nodo);
+    let bestScore = nodo.score;
+    let bestChild = {}
+    for (child of children) {
+        let current = _minimax(child, problem);
+        if (isMax) {
+            if (current.score > bestScore) {
+                bestScore = current.score;
+                bestChild = current;
+            }
+        } else {
+            if (current.score < bestScore) {
+                bestScore = current.score;
+                bestChild = current;
             }
         }
     }
+    nodo.score = bestScore;
+    nodo.nextMove = bestChild.move;
+    return nodo;
 }
 
-module.exports = dfs;
+module.exports = minMax;
