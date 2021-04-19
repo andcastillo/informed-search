@@ -4,9 +4,19 @@ const minMax = require("./minMax");
 const map = [[0, 1, 0], [2, 2, 0], [0, 1, 0]];
 //Los 1 son las jugadas del jugador 1
 //Los 2 son las jugadas del jugador 2
+/**
+ * root:  {state: [[0, 0, 0], [0, 0, 0], [0, 0, 0]], turn: 1, level: 0, score: Number.MIN_SAFE_INTEGER}
+ */
+
+/**
+ * 
+ * @param {*} nodo 
+ * @param {*} constantes 
+ * @returns 
+ */
 
 function isSolution(nodo, constantes) {
-    let solution = constantes.solution;
+    let solution = constantes.map;
     let full = true;
     for (let row in solution) {
         for (let cell in row) {
@@ -43,43 +53,30 @@ function isSolution(nodo, constantes) {
     
     return isSolution || full;
 }
-
+/**
+ * nodo:
+ *  state => [[0, 1, 0],[2, 0, 0],[0, 0, 0]]
+ *  turn => 1 || 2
+ * @param {*} nodo 
+ * @param {*} constantes 
+ * @returns 
+ */
 function getChildren(nodo, constantes) {
-    let map = constantes.map;
+    let map = node.state;
     let children = []
-    // Left
-    if (nodo.value.x >= 1 && map[nodo.value.y][nodo.value.x - 1] == 0) {
-        children.push({value: {x: nodo.value.x - 1,
-                               y: nodo.value.y},
-                        actions: nodo.actions + 'L',
-                        level: nodo.level + 1
-        });
+    for (let row = 0; i <  3; row++) {
+        for (let col = 0; col < 3;  col++) {
+            if (map[row][col] == 0) {
+                let nextState = JSON.parse(JSON.stringify(map));
+                nextState[row][col] = nodo.turn;
+                children.push({state: nextState, 
+                    turn: nodo.turn == 1 ? 2 : 1, 
+                    level: nodo.level + 1,
+                    score: nodo.turn == 1 ? Number.MAX_SAFE_INTEGER: Number.MIN_SAFE_INTEGER
+                });
+            }
+        }
     }
-    // Up
-    if (nodo.value.y >= 1 && map[nodo.value.y - 1][nodo.value.x] == 0) {
-        children.push({value: {x: nodo.value.x,
-                               y: nodo.value.y - 1},
-                        actions: nodo.actions + 'U',
-                        level: nodo.level + 1
-        });
-    }
-    // Right
-    if (nodo.value.x < map[0].length - 1 && map[nodo.value.y ][nodo.value.x + 1] == 0) {
-        children.push({value: {x: nodo.value.x + 1,
-                               y: nodo.value.y},
-                        actions: nodo.actions + 'R',
-                        level: nodo.level + 1
-        });
-    }
-    // Down
-    if (nodo.value.y < map.length - 1 && map[nodo.value.y + 1][nodo.value.x] == 0) {
-        children.push({value: {x: nodo.value.x,
-                               y: nodo.value.y + 1},
-                        actions: nodo.actions + 'D',
-                        level: nodo.level + 1
-        });
-    }
-
     return children;
 }
 
@@ -87,18 +84,10 @@ function hashFunction(node) {
     return node.value.x + '-' + node.value.y;
 }
 
-let constantes = {map, solution, start, actions, costs}
+let constantes = {map}
 let problem = {constantes, isSolution, getChildren, hashFunction}
 
-let method = process.argv.slice(2);
-let result = '';
-if (method == 'bfs')
-    result = bfs(problem);
-if (method == 'dfs')
-    result = dfs(problem);
-
-console.log(result); // "RUUUUU"
-
+print(minMax(problem)); // Debe retornar la siguiente jugada con su máximo score pos: [1, 1], score: 0
 
 /** 
 let root = {value: constantes.start, actions: '', level: 0};

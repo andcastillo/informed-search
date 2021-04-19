@@ -8,7 +8,7 @@ function removeFromQueue(queue) {
 }
 
 //let problem = {constantes, isSolution, getChildren}
-function dfs(problem) {
+function minMax(problem) {
     let root = {value: problem.constantes.start, actions: '', level: 0};
     let hashTable = {}; 
     let cola = addToQueue([], [root]);
